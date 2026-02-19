@@ -1,10 +1,98 @@
 <!DOCTYPE html>
-<html>
+<html lang="ja">
 <head>
-  <title>My Page</title>
+  <meta charset="UTF-8">
+  <title>稟議書PDF作成</title>
+
+  <!-- jsPDF -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+  <style>
+    body {
+      font-family: sans-serif;
+      padding: 20px;
+    }
+    input, textarea {
+      width: 300px;
+      margin-bottom: 10px;
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+    }
+  </style>
 </head>
 <body>
-  <h1>Hello GitHub Pages!</h1>
-  <button onclick="alert('Hello!')">Click</button>
+
+<h2>稟議書入力フォーム</h2>
+
+<div>
+  部署名<br>
+  <input type="text" id="dept" value="斑鳩"><br>
+
+  氏名<br>
+  <input type="text" id="name" value="ムギ"><br>
+
+  件名<br>
+  <input type="text" id="title" value="セクハラ防止委員会設立の件"><br>
+
+  起案日<br>
+  <input type="date" id="date"><br>
+
+  内容<br>
+  <textarea id="content" rows="5">セクハラ防止委員会を設立したい。</textarea><br>
+
+  <button onclick="createPDF()">PDF作成</button>
+</div>
+
+<script>
+async function createPDF() {
+
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF();
+
+  const dept = document.getElementById("dept").value;
+  const name = document.getElementById("name").value;
+  const title = document.getElementById("title").value;
+  const date = document.getElementById("date").value;
+  const content = document.getElementById("content").value;
+
+  // 日本語フォント（ブラウザ環境により文字化けする場合あり）
+  doc.setFont("Helvetica");
+
+  // ===== タイトル =====
+  doc.setFontSize(18);
+  doc.text("稟 議 書", 105, 20, { align: "center" });
+
+  doc.setFontSize(11);
+
+  // ===== 起案者 =====
+  doc.text(`部署名: ${dept}`, 20, 40);
+  doc.text(`氏名: ${name}`, 120, 40);
+
+  // ===== 件名ボックス =====
+  doc.rect(20, 50, 170, 20);
+  doc.text("件名:", 22, 58);
+  doc.text(title, 40, 58);
+
+  // ===== 日付 =====
+  doc.text(`起案日: ${date}`, 120, 65);
+
+  // ===== 内容枠 =====
+  doc.rect(20, 75, 170, 80);
+  doc.text("内容:", 22, 82);
+
+  const splitText = doc.splitTextToSize(content, 160);
+  doc.text(splitText, 22, 90);
+
+  // ===== 決裁欄 =====
+  doc.rect(20, 165, 170, 30);
+  doc.text("決裁印:", 22, 172);
+
+  // ===== 保存 =====
+  doc.save("ringi.pdf");
+}
+</script>
+
 </body>
 </html>
