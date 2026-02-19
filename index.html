@@ -1,54 +1,29 @@
 <!DOCTYPE html>
-<html lang="ja">
+<html>
 <head>
 <meta charset="UTF-8">
-<title>稟議書PDFv1</title>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
 </head>
 <body>
 
-<h2>稟議書入力</h2>
+<div id="pdfArea">
+  <h1>稟議書</h1>
+  <p>起案者：ムギ</p>
+  <p>件名：セクハラ防止委員会設立の件</p>
+</div>
 
-部署名<br>
-<input id="dept" value="斑鳩"><br>
-
-氏名<br>
-<input id="name" value="ムギ"><br>
-
-件名<br>
-<input id="title" value="セクハラ防止委員会設立の件"><br>
-
-<button onclick="createPDF()">PDF作成</button>
+<button onclick="makePDF()">PDF保存</button>
 
 <script>
-async function createPDF() {
+function makePDF(){
 
-  const { jsPDF } = window.jspdf;
-  const doc = new jsPDF();
+  const element = document.getElementById("pdfArea");
 
-  // フォント読み込み
-  const font = await fetch("NotoSansJP-Regular.ttf")
-    .then(res => res.arrayBuffer());
-
-  doc.addFileToVFS("NotoSansJP-Regular.ttf", font);
-  doc.addFont("NotoSansJP-Regular.ttf", "NotoSansJP", "normal");
-  doc.setFont("NotoSansJP");
-
-  const dept = document.getElementById("dept").value;
-  const name = document.getElementById("name").value;
-  const title = document.getElementById("title").value;
-
-  doc.setFontSize(18);
-  doc.text("稟議書", 105, 20, { align: "center" });
-
-  doc.setFontSize(12);
-  doc.text(`部署名: ${dept}`, 20, 40);
-  doc.text(`氏名: ${name}`, 120, 40);
-  doc.text(`件名: ${title}`, 20, 60);
-
-  doc.save("ringi.pdf");
+  html2pdf()
+    .from(element)
+    .save("ringi.pdf");
 }
 </script>
 
